@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  firebaseEndpoint: 'https://angular-course-project-6ee9c.firebaseio.com/'
 };

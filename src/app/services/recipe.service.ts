@@ -1,16 +1,20 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Recipe} from '../models/recipe';
 import {Ingredient} from '../models/ingredient';
 import {ShoppingListService} from './shopping-list.service';
 import {Subject} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {environment} from '../../environments/environment';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecipeService {
-  recipeSelected = new Subject<Recipe>();
+  private readonly FIREBASEDB = environment.firebaseEndpoint;
+  recipesChanges = new Subject<Recipe[]>();
   private recipes: Array<Recipe> = [
-    new Recipe(
+    /* new Recipe(
       'Arroz con pollo',
       'Colombian typical food',
       'https://s1.eestatic.com/2020/01/28/cocinillas/recetas/pasta-y-arroz/Arroz-Pollo-Pasta_y_arroz_463216136_143694760_1706x960.jpg',
@@ -27,21 +31,61 @@ export class RecipeService {
         new Ingredient('Chicken', 2),
         new Ingredient('Potatoes', 2)
       ]
-    ),
+    ) */
   ];
+
   constructor(
-    private shoppingListService: ShoppingListService
-  ) { }
+    private shoppingListService: ShoppingListService,
+    private http: HttpClient
+  ) {
+  }
 
   getRecipes(): Array<Recipe> {
     return this.recipes.slice();
+  }
+
+  getRecipe(id: number): Recipe {
+    return this.recipes[id];
   }
 
   addIngredients(ingredients: Ingredient[]) {
     this.shoppingListService.addIngredients(ingredients);
   }
 
-  getRecipe(id: number): Recipe {
-    return this.recipes[id];
+  addRecipe(newRecipe: Recipe) {
+    this.recipes.push(newRecipe);
+    this.recipesChanges.next(this.recipes.slice());
+  }
+
+  updateRecipe(id: number, newRecipe: Recipe) {
+    this.recipes[id] = newRecipe;
+    this.recipesChanges.next(this.recipes.slice());
+  }
+
+  deleteRecipe(id: number) {
+    this.recipes.splice(id, 1);
+    this.recipesChanges.next(this.recipes.slice());
+  }
+
+  storeRecipesDb() {
+    const recipes = this.recipes;
+    return this.http.put(this.FIREBASEDB + 'recipes.json', recipes)
+      .subscribe(res => {
+        console.log(res);
+      });
+  }
+
+  fetchRecipes() {
+    return this.http.get<Recipe[]>(this.FIREBASEDB + 'recipes.json')
+      .pipe(map(recipes => {
+          return recipes.map(recipe => {
+            return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []};
+          });
+        }),
+        tap(recipes => {
+          this.recipes = recipes;
+          this.recipesChanges.next(this.recipes.slice());
+        })
+      );
   }
 }

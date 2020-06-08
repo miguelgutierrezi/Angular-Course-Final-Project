@@ -3,8 +3,8 @@
     <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
       <div class="row">
         <div class="col-12">
-          <button type="submit" class="btn btn-success mr-1">Save</button>
-          <button class="btn btn-danger mr-1">Cancel</button>
+          <button [disabled]="recipeForm.invalid" type="submit" class="btn btn-success mr-1">Save</button>
+          <button type="button" class="btn btn-danger mr-1" (click)="onCancel()">Cancel</button>
         </div>
       </div>
       <div class="row">
@@ -19,19 +19,19 @@
         <div class="col-12">
           <div class="form-group">
             <label for="path">Image Path</label>
-            <input type="text" id="path" class="form-control" formControlName="imagePath">
+            <input type="text" id="path" class="form-control" formControlName="imagePath" #imagePath>
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="recipeForm.get('imagePath').valid">
         <div class="col-12">
-          <img class="img-fluid" src="{{recipeForm.get('imagePath')}}" alt="Image">
+          <img class="img-fluid" [src]="imagePath.value" alt="Image">
         </div>
       </div>
       <div class="row">
         <div class="col-12">
           <div class="form-group">
-            <label for="description">Desciption</label>
+            <label for="description">Description</label>
             <textarea id="description" class="form-control" rows="6" formControlName="description"></textarea>
           </div>
         </div>
@@ -41,14 +41,22 @@
           <div class="row"
                *ngFor="let ingredientCtrl of ingredients; let i = index"
                [formGroupName]="i">
-            <div class="col-8 mb-1">
+            <div class="col-8 mt-1">
               <input type="text" class="form-control" formControlName="name">
             </div>
-            <div class="col-2 mb-1">
+            <div class="col-2 mt-1">
               <input type="number" class="form-control" formControlName="amount">
             </div>
-            <div class="col-2 mb-1">
-              <button class="btn btn-danger mr-1">X</button>
+            <div class="col-2 mt-1">
+              <button type="button" class="btn btn-danger mr-1" (click)="onDeleteIngredient(i)">X</button>
+            </div>
+          </div>
+          <div class="row">
+            <hr/>
+            <div class="col-12">
+              <button type="button" class="btn btn-success mt-2 ml-1" (click)="onAddIngredient()">Add ingredient</button>
+              <button *ngIf="ingredients.length > 0" type="button" class="btn btn-danger mt-2 ml-1"
+                      (click)="onClearIngredients()">Remove all ingredients</button>
             </div>
           </div>
         </div>

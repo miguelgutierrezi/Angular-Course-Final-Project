@@ -15,10 +15,10 @@
       <button type="button" class="btn btn-primary dropdown-toggle" appDropdown data-toggle="dropdown">Manage recipe
       </button>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="#" style="cursor:pointer;" (click)="toShoppingList()">Add ingredients to shopping
+        <a class="dropdown-item" style="cursor:pointer;" (click)="toShoppingList()">Add ingredients to shopping
           list</a>
         <a style="cursor: pointer;" class="dropdown-item" (click)="editRecipe()">Edit recipe</a>
-        <a style="cursor: pointer;" class="dropdown-item">Delete recipe</a>
+        <a style="cursor: pointer;" class="dropdown-item" (click)="onDeleteRecipe()">Delete recipe</a>
       </div>
     </div>
   </div>
