@@ -7,11 +7,13 @@
     </div>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="nav navbar-nav">
-        <li class="nav-item" routerLinkActive="active "><a class="nav-link" routerLink="/recipes">Recipes</a></li>
+        <li class="nav-item" routerLinkActive="active" *ngIf="isAuthenticated"><a class="nav-link" routerLink="/recipes">Recipes</a></li>
+        <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated"><a class="nav-link" routerLink="/auth">Login</a></li>
         <li class="nav-item" routerLinkActive="active"><a class="nav-link" routerLink="/shoppingList">Shopping list</a></li>
       </ul>
-      <ul class="nav navbar-nav ml-auto">
-        <li class="dropdown">
+      <ul class="nav navbar-nav" style="margin-left: auto;" *ngIf="isAuthenticated">
+        <li class="nav-item mr-3" style="color: black; cursor: pointer;" (click)="onLogout()">Logout</li>
+        <li class="dropdown nav-item">
           <a class="dropdown-toggle" role="button" style="color: black; cursor: pointer;" data-toggle="dropdown">Manage</a>
           <div class="dropdown-menu">
             <a class="dropdown-item" style="cursor: pointer;" (click)="onStoreRecipes()">Save data</a>
