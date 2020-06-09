@@ -3,7 +3,7 @@ import {NgForm} from '@angular/forms';
 import {AuthService} from '../../services/auth.service';
 import {Observable} from 'rxjs';
 import {AuthResponse} from '../../models/auth-response';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -14,13 +14,12 @@ export class AuthComponent implements OnInit {
   @ViewChild('userForm') userForm: NgForm;
   isLoginMode = true;
   isLoading = false;
-  error: string = null;
+  error = null;
   authObs: Observable<AuthResponse>;
 
   constructor(
     private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {
   }
 
