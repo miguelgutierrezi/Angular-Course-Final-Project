@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  firebaseEndpoint: 'https://angular-course-project-6ee9c.firebaseio.com/'
+  firebaseEndpoint: 'https://angular-course-project-6ee9c.firebaseio.com/',
+  apiKey: 'AIzaSyAoNqGHPzWUYS1uuTGxxUs5FyKhnjKiFKM'
 };
 
 /*

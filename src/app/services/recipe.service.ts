@@ -6,6 +6,10 @@ import {Subject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {map, tap} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import * as Actions from '../components/shopping-list/store/shopping-list.actions';
+import * as fromShoppingList from '../components/shopping-list/store/shopping-list.reducer';
+
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +40,8 @@ export class RecipeService {
 
   constructor(
     private shoppingListService: ShoppingListService,
-    private http: HttpClient
+    private http: HttpClient,
+    private store: Store<fromShoppingList.AppState>
   ) {
   }
 
@@ -49,7 +54,8 @@ export class RecipeService {
   }
 
   addIngredients(ingredients: Ingredient[]) {
-    this.shoppingListService.addIngredients(ingredients);
+    // this.shoppingListService.addIngredients(ingredients);
+    this.store.dispatch(new Actions.AddIngredients(ingredients));
   }
 
   addRecipe(newRecipe: Recipe) {

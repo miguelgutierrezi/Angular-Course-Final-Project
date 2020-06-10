@@ -5,6 +5,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {BehaviorSubject, throwError} from 'rxjs';
 import {User} from '../models/user';
 import {Router} from '@angular/router';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import {Router} from '@angular/router';
 export class AuthService {
   user = new BehaviorSubject<User>(null);
   private timer: any;
+  private readonly apiKey = environment.apiKey;
 
   constructor(
     private http: HttpClient,
@@ -79,7 +81,7 @@ export class AuthService {
   }
 
   signUp(email: string, password: string) {
-    return this.http.post<AuthResponse>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAoNqGHPzWUYS1uuTGxxUs5FyKhnjKiFKM',
+    return this.http.post<AuthResponse>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + this.apiKey,
       {
         email,
         password,
@@ -93,7 +95,7 @@ export class AuthService {
   }
 
   login(email: string, password: string) {
-    return this.http.post<AuthResponse>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAoNqGHPzWUYS1uuTGxxUs5FyKhnjKiFKM',
+    return this.http.post<AuthResponse>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + this.apiKey,
       {
         email,
         password,
