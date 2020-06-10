@@ -48,12 +48,26 @@ export class AuthService {
   }
 
   autoLogin() {
-    const userData: User = JSON.parse(localStorage.getItem('user'));
+    const userData: {
+      email: string,
+      id: string,
+      _token: string,
+      _tokenExpirationDate: string
+    } = JSON.parse(localStorage.getItem('user'));
+
     if (!userData) {
       return;
-    } else {
-      this.user.next(userData);
-      const expire = new Date(userData.tokenExpirationDate).getTime() - new Date().getTime();
+    }
+    const user = new User(
+      userData.email,
+      userData.id,
+      userData._token,
+      new Date(new Date(userData._tokenExpirationDate).getTime() + 18000000)
+    );
+
+    if (user.token) {
+      this.user.next(user);
+      const expire = new Date(user.tokenExpirationDate).getTime() - new Date().getTime();
       this.autoLogout(expire);
     }
   }

@@ -8,6 +8,7 @@ import {
 import {Observable} from 'rxjs';
 import {AuthService} from './auth.service';
 import {exhaustMap, take} from 'rxjs/operators';
+import {User} from '../models/user';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -24,9 +25,15 @@ export class AuthInterceptor implements HttpInterceptor {
         if (!user) {
           return next.handle(request);
         }
+        const userData: {
+          email: string,
+          id: string,
+          _token: string,
+          _tokenExpirationDate: string
+        } = JSON.parse(localStorage.getItem('user'));
         const modifiedReq = request.clone(
           {
-            params: new HttpParams().set('auth', user.token)
+            params: new HttpParams().set('auth', userData._token)
           });
         return next.handle(modifiedReq);
       })

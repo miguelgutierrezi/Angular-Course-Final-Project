@@ -20,7 +20,13 @@ export class AuthGuard implements CanActivate {
     return this.authService.user.pipe(
       take(1),
       map(user => {
-        const isAuth = !!user;
+        const userData: {
+          email: string,
+          id: string,
+          _token: string,
+          _tokenExpirationDate: string
+        } = JSON.parse(localStorage.getItem('user'));
+        const isAuth = !!userData;
         if (isAuth) {
           return true;
         }
