@@ -6,6 +6,9 @@ import {BehaviorSubject, throwError} from 'rxjs';
 import {User} from '../models/user';
 import {Router} from '@angular/router';
 import {environment} from '../../environments/environment';
+import {Store} from '@ngrx/store';
+import * as fromApp from '../store/app.reducer';
+import * as Actions from '../components/auth/store/auth.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -17,15 +20,22 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private store: Store<fromApp.AppState>
   ) {
   }
 
   private handleAuth(email: string, localId: string, token: string, expiresIn: number) {
     const expirationDate = new Date(new Date().getTime() + expiresIn);
     const userToStore = new User(email, localId, token, expirationDate);
-    this.user.next(userToStore);
-    this.autoLogout(expiresIn * 1000);
+    // this.user.next(userToStore);
+    this.store.dispatch(new Actions.AuthSuccess({
+      email: userToStore.email,
+      userId: userToStore.id,
+      token: userToStore.token,
+      expirationDate
+    }));
+    this.setLogoutTimer(expiresIn * 1000);
     localStorage.setItem('user', JSON.stringify(userToStore));
   }
 
@@ -68,16 +78,30 @@ export class AuthService {
     );
 
     if (user.token) {
-      this.user.next(user);
+      // this.user.next(user);
+      this.store.dispatch(new Actions.AuthSuccess({
+        email: user.email,
+        userId: user.id,
+        token: user.token,
+        expirationDate: new Date(new Date(userData._tokenExpirationDate).getTime() + 18000000)
+      }));
       const expire = new Date(user.tokenExpirationDate).getTime() - new Date().getTime();
-      this.autoLogout(expire);
+      this.setLogoutTimer(expire);
     }
   }
 
-  autoLogout(expirationDuration: number) {
+  setLogoutTimer(expirationDuration: number) {
     this.timer = setTimeout(() => {
-      this.logout();
+      // this.logout();
+      this.store.dispatch(new Actions.AutoLogout());
     }, expirationDuration);
+  }
+
+  clearLogoutTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
   }
 
   signUp(email: string, password: string) {
@@ -108,8 +132,9 @@ export class AuthService {
   }
 
   logout() {
-    this.user.next(null);
-    this.router.navigate(['/auth']);
+    // this.user.next(null);
+    this.store.dispatch(new Actions.Logout());
+    // this.router.navigate(['/auth']);
     localStorage.removeItem('user');
     if (this.timer) {
       clearTimeout(this.timer);

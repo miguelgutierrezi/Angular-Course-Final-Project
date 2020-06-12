@@ -8,7 +8,7 @@ import {environment} from '../../environments/environment';
 import {map, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import * as Actions from '../components/shopping-list/store/shopping-list.actions';
-import * as fromShoppingList from '../components/shopping-list/store/shopping-list.reducer';
+import * as fromApp from '../store/app.reducer';
 
 
 @Injectable({
@@ -41,7 +41,7 @@ export class RecipeService {
   constructor(
     private shoppingListService: ShoppingListService,
     private http: HttpClient,
-    private store: Store<fromShoppingList.AppState>
+    private store: Store<fromApp.AppState>
   ) {
   }
 
