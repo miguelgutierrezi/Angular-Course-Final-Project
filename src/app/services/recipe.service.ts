@@ -9,6 +9,7 @@ import {map, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import * as Actions from '../components/shopping-list/store/shopping-list.actions';
 import * as fromApp from '../store/app.reducer';
+import * as recipesActions from '../components/recipes/store/recipes.actions';
 
 
 @Injectable({
@@ -90,7 +91,8 @@ export class RecipeService {
         }),
         tap(recipes => {
           this.recipes = recipes;
-          this.recipesChanges.next(this.recipes.slice());
+          // this.recipesChanges.next(this.recipes.slice());
+          this.store.dispatch(new recipesActions.SetRecipes(this.recipes));
         })
       );
   }

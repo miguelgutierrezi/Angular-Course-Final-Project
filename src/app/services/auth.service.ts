@@ -33,7 +33,8 @@ export class AuthService {
       email: userToStore.email,
       userId: userToStore.id,
       token: userToStore.token,
-      expirationDate
+      expirationDate,
+      redirect: true
     }));
     this.setLogoutTimer(expiresIn * 1000);
     localStorage.setItem('user', JSON.stringify(userToStore));
@@ -83,7 +84,8 @@ export class AuthService {
         email: user.email,
         userId: user.id,
         token: user.token,
-        expirationDate: new Date(new Date(userData._tokenExpirationDate).getTime() + 18000000)
+        expirationDate: new Date(new Date(userData._tokenExpirationDate).getTime() + 18000000),
+        redirect: false
       }));
       const expire = new Date(user.tokenExpirationDate).getTime() - new Date().getTime();
       this.setLogoutTimer(expire);
